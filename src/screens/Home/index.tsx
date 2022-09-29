@@ -1,9 +1,33 @@
-import { Text, View, TextInput, TouchableOpacity } from 'react-native';
+import {
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  FlatList,
+} from 'react-native';
+import { Participant } from '../../components/Participant';
 import { styles } from './styles';
 
 export function Home() {
+  const participants = [
+    'Jon Snow',
+    'Daenerys Targeryen',
+    'Arya Stark',
+    'Sansa Stark',
+    'Shawn McKinney',
+    'Francisco Franklin',
+    'Warren Douglas',
+    'Dennis Frank',
+    'Alejandro Frank',
+    'Micheal Weber',
+  ];
+
   function handleParticipantAdd() {
     console.log(Math.floor(Math.random() * 10));
+  }
+
+  function handleParticipantRemove(name: string) {
+    console.log(`${name} was removed`);
   }
 
   return (
@@ -22,6 +46,25 @@ export function Home() {
           <Text style={styles.buttonText}>+</Text>
         </TouchableOpacity>
       </View>
+
+      <FlatList
+        data={participants}
+        keyExtractor={(item) => item}
+        renderItem={({ item }) => (
+          <Participant
+            name={item}
+            key={item}
+            onRemove={handleParticipantRemove}
+          />
+        )}
+        showsVerticalScrollIndicator={false}
+        ListEmptyComponent={() => (
+          <Text style={styles.listEmptyText}>
+            Ninguém chegou no evento ainda? Adicione participantes a sua lista
+            de presença
+          </Text>
+        )}
+      />
     </View>
   );
 }
