@@ -1,33 +1,51 @@
+import { useState } from 'react';
 import {
   Text,
   View,
   TextInput,
   TouchableOpacity,
   FlatList,
+  PanResponder,
+  Alert,
 } from 'react-native';
 import { Participant } from '../../components/Participant';
 import { styles } from './styles';
 
 export function Home() {
-  const participants = [
-    'Jon Snow',
-    'Daenerys Targeryen',
-    'Arya Stark',
-    'Sansa Stark',
-    'Shawn McKinney',
-    'Francisco Franklin',
-    'Warren Douglas',
-    'Dennis Frank',
-    'Alejandro Frank',
-    'Micheal Weber',
-  ];
+  const [participants, setParticipants] = useState<string[]>([]);
+  const [name, setName] = useState<string>('');
 
   function handleParticipantAdd() {
-    console.log(Math.floor(Math.random() * 10));
+    const cleanName = name.trim();
+
+    if (cleanName.length === 0) return setName('');
+
+    const regex = new RegExp(`^${cleanName}$`, 'i');
+
+    const participantAlreadyExists = participants.find((it) => it.match(regex));
+
+    if (participantAlreadyExists)
+      return Alert.alert('Participante já incluso na lista');
+
+    setParticipants([...participants, cleanName]);
+    setName('');
   }
 
   function handleParticipantRemove(name: string) {
-    console.log(`${name} was removed`);
+    Alert.alert(
+      'Remover participante',
+      `Deseja remover participante ${name}?`,
+      [
+        {
+          text: 'Cancelar',
+        },
+        {
+          text: 'Sim',
+          onPress: () =>
+            setParticipants(participants.filter((it) => it !== name)),
+        },
+      ]
+    );
   }
 
   return (
@@ -39,6 +57,8 @@ export function Home() {
       <View style={styles.form}>
         <TextInput
           style={styles.input}
+          onChangeText={setName}
+          value={name}
           placeholder="Nome do participante"
           placeholderTextColor="#FFFFFF"
         />
